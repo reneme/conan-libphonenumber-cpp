@@ -26,7 +26,9 @@ class LibphonenumberCppConan(ConanFile):
     build_subfolder = "build_subfolder"
 
     requires = (
-        "gtest/[>=1.8.1]@bincrafters/stable"
+        "gtest/[>=1.8.1]@bincrafters/stable",
+        "protobuf/[>=3.6]@bincrafters/stable",
+        "icu/[>=60]@bincrafters/stable"
     )
 
     def config_options(self):
@@ -42,11 +44,11 @@ class LibphonenumberCppConan(ConanFile):
     def configure_cmake(self):
         cmake = CMake(self)
 
-        cmake.definitions["BUILD_GEOCODER"] = False
         cmake.definitions["USE_BOOST"] = False
 
         # TODO: only for GCC
-        cmake.definitions["CMAKE_CXX_FLAGS"] = "-Wno-error=sign-compare"
+        cmake.definitions["CMAKE_CXX_FLAGS"]   = "-Wno-error=sign-compare"
+        cmake.definitions["CMAKE_PREFIX_PATH"] = ";".join([ self.deps_cpp_info["gtest"].rootpath , self.deps_cpp_info["protobuf"].rootpath , self.deps_cpp_info["icu"].rootpath ])
 
         if self.settings.os != 'Windows':
             cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
